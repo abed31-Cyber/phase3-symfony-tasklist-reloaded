@@ -8,6 +8,54 @@
 set -euo pipefail
 
 REPO="abed31-Cyber/phase3-symfony-tasklist-reloaded"
+OWNER="abed31-Cyber"
+PROJECT_NAME="symfony-tasklist"
+
+# ---------------------------------------------------------------------------
+# Fonctions utilitaires
+# ---------------------------------------------------------------------------
+
+# Récupérer l'ID GraphQL du projet (Projects v2) par son nom exact
+get_project_id() {
+  gh api graphql -f query='
+    query($login: String!) {
+      user(login: $login) {
+        projectsV2(first: 20) {
+          nodes { id title }
+        }
+      }
+    }' -f login="$OWNER" \
+    --jq ".data.user.projectsV2.nodes[] | select(.title == \"$PROJECT_NAME\") | .id"
+}
+
+# Ajouter une issue au projet GitHub Projects v2
+add_issue_to_project() {
+  local project_id="$1"
+  local issue_url="$2"
+  # Récupérer l'ID de nœud GraphQL de l'issue
+  local issue_node_id
+  issue_node_id=$(gh api repos/"$REPO"/issues \
+    --jq ".[] | select(.html_url == \"$issue_url\") | .node_id")
+
+  if [[ -z "$issue_node_id" ]]; then
+    # Fallback : l'issue vient d'être créée, récupérer via URL directe
+    issue_node_id=$(gh api "$(echo "$issue_url" | sed 's|https://github.com/|repos/|; s|/issues/|/issues/|')" \
+      --jq '.node_id' 2>/dev/null || true)
+  fi
+
+  if [[ -n "$issue_node_id" ]]; then
+    gh api graphql -f query='
+      mutation($projectId: ID!, $contentId: ID!) {
+        addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+          item { id }
+        }
+      }' -f projectId="$project_id" -f contentId="$issue_node_id" > /dev/null \
+      && echo "    → Ajoutée au projet ✓" \
+      || echo "    → Impossible d'ajouter au projet (non bloquant)"
+  else
+    echo "    → node_id introuvable, passage"
+  fi
+}
 
 echo "=== Création des labels ==="
 
@@ -450,5 +498,39 @@ En tant qu'\''administrateur du système, je veux m'\''assurer que chaque utilis
 - [ ] Le code est pushé et la PR est mergée'
 
 echo ""
+echo "=== Ajout des issues au projet GitHub Projects : '$PROJECT_NAME' ==="
+
+PROJECT_ID=$(get_project_id)
+
+if [[ -z "$PROJECT_ID" ]]; then
+  echo "⚠️  Projet '$PROJECT_NAME' introuvable pour l'utilisateur '$OWNER'."
+  echo "   Vérifie que le nom exact est bien '$PROJECT_NAME' dans tes GitHub Projects."
+  echo "   Les issues ont quand même été créées dans le dépôt."
+else
+  echo "   Projet trouvé : $PROJECT_ID"
+  echo "   Récupération des issues créées et ajout au projet..."
+
+  # Récupérer toutes les issues ouvertes du repo et les ajouter au projet
+  ISSUE_NODES=$(gh api "repos/$REPO/issues?state=open&per_page=50" \
+    --jq '.[].node_id')
+
+  COUNT=0
+  while IFS= read -r node_id; do
+    [[ -z "$node_id" ]] && continue
+    gh api graphql -f query='
+      mutation($projectId: ID!, $contentId: ID!) {
+        addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+          item { id }
+        }
+      }' -f projectId="$PROJECT_ID" -f contentId="$node_id" > /dev/null 2>&1 \
+      && COUNT=$((COUNT + 1)) \
+      || true
+  done <<< "$ISSUE_NODES"
+
+  echo "   ✅ $COUNT issue(s) ajoutée(s) au projet '$PROJECT_NAME'"
+fi
+
+echo ""
 echo "=== ✅ Terminé ! ==="
 echo "9 issues, 14 labels et 4 milestones créés dans : https://github.com/$REPO/issues"
+echo "Projet GitHub : https://github.com/users/$OWNER/projects"
