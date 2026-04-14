@@ -106,11 +106,11 @@ create_milestone "Sprint 2" "Cœur métier (Tasks)"
 create_milestone "Sprint 3" "Organisation avancée"
 create_milestone "Sprint 4" "Sécurité et Finalisation"
 
-# Récupérer les IDs des milestones
-MS1=$(gh api repos/"$REPO"/milestones --jq '.[] | select(.title=="Sprint 1") | .number')
-MS2=$(gh api repos/"$REPO"/milestones --jq '.[] | select(.title=="Sprint 2") | .number')
-MS3=$(gh api repos/"$REPO"/milestones --jq '.[] | select(.title=="Sprint 3") | .number')
-MS4=$(gh api repos/"$REPO"/milestones --jq '.[] | select(.title=="Sprint 4") | .number')
+# Titres des milestones (gh issue create attend le titre, pas le numéro)
+MS1="Sprint 1"
+MS2="Sprint 2"
+MS3="Sprint 3"
+MS4="Sprint 4"
 
 echo ""
 echo "=== Création des Issues ==="
