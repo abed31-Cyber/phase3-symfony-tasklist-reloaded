@@ -1,28 +1,72 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion - Gestion de Tâches{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+<div class="min-h-screen bg-blue-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2rem] shadow-2xl p-10 w-full max-w-md border border-white/50">
+        
+        {# En-tête #}
+        <div class="mb-8 text-center sm:text-left">
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Gestion de Tâches</h1>
+            <p class="text-gray-500 text-sm mt-2">Organisez votre journée efficacement !</p>
         </div>
-    {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+        {# Sélecteur Connexion/Inscription #}
+        <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-8">
+            <div class="w-1/2 text-center py-2.5 text-sm font-bold bg-white rounded-xl shadow-sm text-600">Connexion</div>
+            <a href="{{ path('app_register') }}" class="w-1/2 text-center py-2.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">Inscription</a>
+        </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+        <form method="post" class="space-y-5">
+            {# Gestion des erreurs #}
+            {% if error %}
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl text-sm mb-4">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="bg-blue-50 text-blue-700 p-4 rounded-xl text-sm mb-4 flex justify-between items-center">
+                    <span>Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong></span>
+                    <a href="{{ logout_path() }}" class="underline font-bold">Déconnexion</a>
+                </div>
+            {% endif %}
+
+            {# Champ Email #}
+            <div class="space-y-1">
+                <label for="inputEmail" class="block text-sm font-bold text-gray-700 ml-1">Email</label>
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" 
+                    class="w-full px-5 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all placeholder-gray-400 outline-none" 
+                    placeholder="votre@email.com" autocomplete="email" required autofocus>
+            </div>
+
+            {# Champ Mot de passe #}
+            <div class="space-y-1">
+                <label for="inputPassword" class="block text-sm font-bold text-gray-700 ml-1">Mot de passe</label>
+                <input type="password" name="password" id="inputPassword" 
+                    class="w-full px-5 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all placeholder-gray-400 outline-none" 
+                    placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+
+            {# Token CSRF (Indispensable pour la sécurité) #}
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            {# Option "Se souvenir de moi" (Optionnel mais recommandé) #}
+            <div class="flex items-center justify-between px-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="_remember_me" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-xs text-gray-500 font-medium">Se souvenir de moi</span>
+                </label>
+                <a href="#" class="text-xs text-blue-600 font-bold hover:underline">Oublié ?</a>
+            </div>
+
+            {# Bouton de soumission #}
+            <button type="submit" class="w-full bg-[#0a0a14] text-white font-bold py-4 rounded-2xl hover:bg-gray-800 hover:scale-[1.01] active:scale-95 transition-all duration-200 shadow-lg shadow-gray-200 mt-2">
+                Se connecter
+            </button>
+        </form>
+
+    </div>
+</div>
 {% endblock %}
