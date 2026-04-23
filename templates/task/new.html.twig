@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une tâche{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    
+    <div class="px-6 pt-6 pb-2 flex justify-between items-start">
+      <div>
+        <h2 class="text-xl font-bold text-gray-900">Créer une tâche</h2>
+        <p class="text-sm text-gray-500 mt-1">Ajoutez une nouvelle tâche à votre liste</p>
+      </div>
+      <a href="{{ path('app_dashboard') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+    <div class="p-6 space-y-5">
+      
+      <div class="space-y-2">
+        {{ form_label(form.title, 'Titre de la tâche', {'label_attr': {'class': 'text-sm font-semibold text-gray-700'}}) }}
+        {{ form_widget(form.title, {'attr': {'class': 'w-full bg-gray-50 border-none rounded-xl py-3 px-4 text-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all', 'placeholder': 'Ex: Faire les courses'}}) }}
+      </div>
+
+      <div class="space-y-2">
+        {{ form_label(form.priority, 'Priorité', {'label_attr': {'class': 'text-sm font-semibold text-gray-700'}}) }}
+        <div class="relative">
+          {{ form_widget(form.priority, {'attr': {'class': 'w-full appearance-none bg-gray-50 border-none rounded-xl py-3 px-4 text-gray-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer'}}) }}
+          <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        {{ form_label(form.folder, 'Dossier (optionnel)', {'label_attr': {'class': 'text-sm font-semibold text-gray-700'}}) }}
+        <div class="relative">
+          {{ form_widget(form.folder, {'attr': {'class': 'w-full appearance-none bg-gray-50 border-none rounded-xl py-3 px-4 text-gray-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer'}}) }}
+          <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 pb-8 flex justify-end space-x-3">
+      <a href="{{ path('app_dashboard') }}" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        Annuler
+      </a>
+      <button type="submit" class="px-8 py-2.5 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 transition-colors">
+        Créer
+      </button>
+    </div>
+    {{ form_end(form) }}
+
+  </div>
+</div>
+{% endblock %}

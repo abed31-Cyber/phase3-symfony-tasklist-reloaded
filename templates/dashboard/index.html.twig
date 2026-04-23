@@ -48,9 +48,9 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
                     Nouveau dossier
                 </button>
-                <button class="flex items-center gap-2 bg-[#0a0a14] text-white px-4 py-2 text-sm font-bold rounded-lg hover:bg-gray-800 transition shadow-sm">
+                <a href="{{ path('app_task_new') }}" class="flex items-center gap-2 bg-[#0a0a14] text-white px-4 py-2 text-sm font-bold rounded-lg hover:bg-gray-800 transition shadow-sm">
                     <span class="text-lg">+</span> Nouvelle tâche
-                </button>
+                </a>
                 <a href="{{ logout_path() }}" class="flex items-center gap-2 border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Déconnexion
